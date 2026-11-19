@@ -59,5 +59,13 @@ void main() {
     await tester.pumpAndSettle();
     expect(store.selectedTab, 0);
     expect(find.text('Balancika Demo'), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.person_outline));
+    await tester.pumpAndSettle();
+    expect(find.byTooltip('Edit profile'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Edit profile'));
+    await tester.pumpAndSettle();
+    expect(find.text('Edit Profile'), findsOneWidget);
   });
 }

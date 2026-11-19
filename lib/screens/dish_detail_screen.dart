@@ -8,6 +8,22 @@ import 'package:balancika_demo/widgets/icon_circle_button.dart';
 import 'package:balancika_demo/widgets/quantity_stepper.dart';
 import 'package:material_ui/material_ui.dart';
 
+class ExtraIngredientOption {
+  ExtraIngredientOption({
+    required this.id,
+    required this.name,
+    required this.price,
+    this.isSelected = false,
+    this.isCustom = false,
+  });
+
+  final String id;
+  final String name;
+  final int price;
+  bool isSelected;
+  final bool isCustom;
+}
+
 class DishDetailScreen extends StatefulWidget {
   const DishDetailScreen({super.key, required this.dish});
 
@@ -20,16 +36,138 @@ class DishDetailScreen extends StatefulWidget {
 class _DishDetailScreenState extends State<DishDetailScreen> {
   int _quantity = 1;
 
+  late final List<ExtraIngredientOption> _extraOptions;
+
+  @override
+  void initState() {
+    super.initState();
+    _extraOptions = <ExtraIngredientOption>[
+      ExtraIngredientOption(
+        id: 'extra-meat',
+        name: 'Extra Meat / Protein',
+        price: 8000,
+      ),
+      ExtraIngredientOption(
+        id: 'fried-egg',
+        name: 'Fried Egg',
+        price: 3000,
+      ),
+      ExtraIngredientOption(
+        id: 'extra-rice',
+        name: 'Extra Rice / Side',
+        price: 2000,
+      ),
+      ExtraIngredientOption(
+        id: 'extra-sauce',
+        name: 'Extra Dip & Spices',
+        price: 1000,
+      ),
+    ];
+  }
+
+  int get _extrasTotalPrice => _extraOptions
+      .where((ExtraIngredientOption opt) => opt.isSelected)
+      .fold(0, (int sum, ExtraIngredientOption opt) => sum + opt.price);
+
+  int get _unitPrice => widget.dish.price + _extrasTotalPrice;
+
+  void _showAddCustomIngredientDialog() {
+    final TextEditingController nameController = TextEditingController();
+    final TextEditingController priceController = TextEditingController();
+
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: const Text(
+            'Add Custom Ingredient',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: AppColors.coffee,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              TextField(
+                controller: nameController,
+                autofocus: true,
+                decoration: const InputDecoration(
+                  labelText: 'Ingredient Name',
+                  hintText: 'e.g. Extra Lemongrass, Cheese, Garlic',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: priceController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: 'Extra Price in ៛ (Optional)',
+                  hintText: 'e.g. 2000',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () {
+                final String name = nameController.text.trim();
+                if (name.isEmpty) return;
+                final int parsedPrice =
+                    int.tryParse(priceController.text.trim()) ?? 0;
+
+                setState(() {
+                  _extraOptions.add(
+                    ExtraIngredientOption(
+                      id: 'custom-${DateTime.now().millisecondsSinceEpoch}',
+                      name: name,
+                      price: parsedPrice,
+                      isSelected: true,
+                      isCustom: true,
+                    ),
+                  );
+                });
+                Navigator.of(context).pop();
+              },
+              child: const Text('Add Ingredient'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _addToCart(AppStore store) {
     final Dish dish = widget.dish;
     store.addToCart(dish, quantity: _quantity);
+
+    final List<String> selectedNames = _extraOptions
+        .where((ExtraIngredientOption opt) => opt.isSelected)
+        .map((ExtraIngredientOption opt) => opt.name)
+        .toList();
+
+    final String extrasText = selectedNames.isNotEmpty
+        ? ' with extras (${selectedNames.join(', ')})'
+        : '';
+
     final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
     Navigator.of(context).pop();
     messenger
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
-          content: Text('$_quantity × ${dish.name} added to cart'),
+          content: Text('$_quantity × ${dish.name}$extrasText added to cart'),
           action: SnackBarAction(
             label: 'View cart',
             onPressed: () => store.selectTab(1),
@@ -187,48 +325,64 @@ class _DishDetailScreenState extends State<DishDetailScreen> {
                             ?.copyWith(fontSize: 26, height: 1.2),
                       ),
                       const SizedBox(height: 10),
-                      Row(
+                      Wrap(
+                        spacing: 14,
+                        runSpacing: 6,
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: <Widget>[
-                          const Icon(
-                            Icons.schedule,
-                            size: 15,
-                            color: AppColors.taupe,
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              const Icon(
+                                Icons.schedule,
+                                size: 15,
+                                color: AppColors.taupe,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                '${dish.prepMinutes} min',
+                                style: const TextStyle(
+                                  fontSize: 11.5,
+                                  color: AppColors.taupe,
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '${dish.prepMinutes} min',
-                            style: const TextStyle(
-                              fontSize: 11.5,
-                              color: AppColors.taupe,
-                            ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              const Icon(
+                                Icons.local_fire_department,
+                                size: 15,
+                                color: AppColors.taupe,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                '${dish.calories} kcal',
+                                style: const TextStyle(
+                                  fontSize: 11.5,
+                                  color: AppColors.taupe,
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 14),
-                          const Icon(
-                            Icons.local_fire_department,
-                            size: 15,
-                            color: AppColors.taupe,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '${dish.calories} kcal',
-                            style: const TextStyle(
-                              fontSize: 11.5,
-                              color: AppColors.taupe,
-                            ),
-                          ),
-                          const SizedBox(width: 14),
-                          const Icon(
-                            Icons.restaurant,
-                            size: 15,
-                            color: AppColors.taupe,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            category.label,
-                            style: const TextStyle(
-                              fontSize: 11.5,
-                              color: AppColors.taupe,
-                            ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              const Icon(
+                                Icons.restaurant,
+                                size: 15,
+                                color: AppColors.taupe,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                category.label,
+                                style: const TextStyle(
+                                  fontSize: 11.5,
+                                  color: AppColors.taupe,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -274,7 +428,7 @@ class _DishDetailScreenState extends State<DishDetailScreen> {
                       if (dish.ingredients.isNotEmpty) ...<Widget>[
                         const SizedBox(height: 20),
                         const Text(
-                          'Ingredients',
+                          'Base Ingredients',
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
@@ -309,6 +463,136 @@ class _DishDetailScreenState extends State<DishDetailScreen> {
                           ],
                         ),
                       ],
+                      const SizedBox(height: 24),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          const Flexible(
+                            child: Text(
+                              'Add Extra Ingredients',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.coffee,
+                              ),
+                            ),
+                          ),
+                          TextButton.icon(
+                            onPressed: _showAddCustomIngredientDialog,
+                            icon: const Icon(Icons.add, size: 16),
+                            label: const Text(
+                              'Custom',
+                              style: TextStyle(fontSize: 12),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Column(
+                        children: <Widget>[
+                          for (final ExtraIngredientOption option in _extraOptions)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: Material(
+                                color: option.isSelected
+                                    ? AppColors.sand.withValues(alpha: 0.4)
+                                    : Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  side: BorderSide(
+                                    color: option.isSelected
+                                        ? AppColors.terracotta
+                                        : AppColors.stroke,
+                                  ),
+                                ),
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(14),
+                                  onTap: () {
+                                    setState(() {
+                                      option.isSelected = !option.isSelected;
+                                    });
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 10,
+                                    ),
+                                    child: Row(
+                                      children: <Widget>[
+                                        SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: Checkbox(
+                                            value: option.isSelected,
+                                            activeColor: AppColors.terracotta,
+                                            materialTapTargetSize:
+                                                MaterialTapTargetSize
+                                                    .shrinkWrap,
+                                            onChanged: (bool? val) {
+                                              setState(() {
+                                                option.isSelected =
+                                                    val ?? false;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Expanded(
+                                          child: Text(
+                                            option.name,
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: option.isSelected
+                                                  ? FontWeight.w600
+                                                  : FontWeight.w500,
+                                              color: AppColors.coffee,
+                                            ),
+                                          ),
+                                        ),
+                                        if (option.isCustom) ...<Widget>[
+                                          const SizedBox(width: 6),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 6,
+                                              vertical: 2,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: AppColors.terracotta
+                                                  .withValues(alpha: 0.15),
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                            ),
+                                            child: const Text(
+                                              'Custom',
+                                              style: TextStyle(
+                                                fontSize: 9,
+                                                fontWeight: FontWeight.w600,
+                                                color: AppColors.terracottaDeep,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          option.price > 0
+                                              ? '+${rupiah(option.price)}'
+                                              : 'Free',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
+                                            color: option.isSelected
+                                                ? AppColors.terracottaDeep
+                                                : AppColors.taupe,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -346,7 +630,7 @@ class _DishDetailScreenState extends State<DishDetailScreen> {
               child: FilledButton(
                 onPressed: () => _addToCart(store),
                 child: Text(
-                  'Add to cart · ${rupiah(dish.price * _quantity)}',
+                  'Add to cart · ${rupiah(_unitPrice * _quantity)}',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),

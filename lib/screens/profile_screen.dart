@@ -3,6 +3,7 @@ import 'package:balancika_demo/data/menu_data.dart';
 import 'package:balancika_demo/models/dish.dart';
 import 'package:balancika_demo/models/order.dart';
 import 'package:balancika_demo/screens/dish_detail_screen.dart';
+import 'package:balancika_demo/screens/edit_profile.dart';
 import 'package:balancika_demo/state/app_scope.dart';
 import 'package:balancika_demo/state/app_store.dart';
 import 'package:balancika_demo/theme/app_theme.dart';
@@ -46,8 +47,9 @@ class ProfileScreen extends StatelessWidget {
                   icon: Icons.edit,
                   iconSize: 17,
                   tooltip: 'Edit profile',
-                  onPressed: () =>
-                      _showSnack(context, 'Profile editing is coming soon.'),
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfileScreen(),));
+                  },
                 ),
               ],
             ),

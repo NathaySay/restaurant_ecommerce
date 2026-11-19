@@ -1,6 +1,7 @@
 import 'package:balancika_demo/data/menu_data.dart';
 import 'package:balancika_demo/models/dish.dart';
 import 'package:balancika_demo/screens/dish_detail_screen.dart';
+import 'package:balancika_demo/screens/notification_screen.dart';
 import 'package:balancika_demo/state/app_scope.dart';
 import 'package:balancika_demo/state/app_store.dart';
 import 'package:balancika_demo/theme/app_theme.dart';
@@ -186,17 +187,8 @@ class _MenuScreenState extends State<MenuScreen> {
                     icon: Icons.notifications_none,
                     iconSize: 21,
                     tooltip: 'Notifications',
-                    onPressed: () {
-                      ScaffoldMessenger.of(context)
-                        ..hideCurrentSnackBar()
-                        ..showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'You are all caught up — no new notifications.',
-                            ),
-                          ),
-                        );
-                    },
+                    onPressed:() {Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationScreen(),));
+                      },
                   ),
                   Positioned(
                     right: 1,
