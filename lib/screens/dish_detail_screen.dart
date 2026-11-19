@@ -47,11 +47,7 @@ class _DishDetailScreenState extends State<DishDetailScreen> {
         name: 'Extra Meat / Protein',
         price: 8000,
       ),
-      ExtraIngredientOption(
-        id: 'fried-egg',
-        name: 'Fried Egg',
-        price: 3000,
-      ),
+      ExtraIngredientOption(id: 'fried-egg', name: 'Fried Egg', price: 3000),
       ExtraIngredientOption(
         id: 'extra-rice',
         name: 'Extra Rice / Side',
@@ -62,6 +58,8 @@ class _DishDetailScreenState extends State<DishDetailScreen> {
         name: 'Extra Dip & Spices',
         price: 1000,
       ),
+      ExtraIngredientOption(id: 'more-sweet', name: 'More Sweet', price: 1000),
+      ExtraIngredientOption(id: 'less-sweet', name: 'Less Sweet', price: 1000),
     ];
   }
 
@@ -490,7 +488,8 @@ class _DishDetailScreenState extends State<DishDetailScreen> {
                       const SizedBox(height: 8),
                       Column(
                         children: <Widget>[
-                          for (final ExtraIngredientOption option in _extraOptions)
+                          for (final ExtraIngredientOption option
+                              in _extraOptions)
                             Padding(
                               padding: const EdgeInsets.only(bottom: 8),
                               child: Material(

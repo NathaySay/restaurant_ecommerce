@@ -48,7 +48,12 @@ class ProfileScreen extends StatelessWidget {
                   iconSize: 17,
                   tooltip: 'Edit profile',
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfileScreen(),));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditProfileScreen(),
+                      ),
+                    );
                   },
                 ),
               ],
@@ -76,7 +81,7 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   alignment: Alignment.center,
                   child: const Text(
-                    'AL',
+                    'BK',
                     style: TextStyle(
                       fontSize: 21,
                       fontWeight: FontWeight.w700,
