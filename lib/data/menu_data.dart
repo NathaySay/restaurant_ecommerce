@@ -31,7 +31,7 @@ const List<Dish> menuDishes = <Dish>[
         'Steamed fish curry in coconut milk with kroeung (lemongrass, '
         'turmeric and galangal paste), gently cooked in banana leaves and '
         'crowned with silky coconut cream.',
-    price: 35000,
+    price: 15000,
     categoryId: 'soup',
     image: 'assets/images/fish-amok.jpg',
     rating: 4.9,
@@ -55,7 +55,7 @@ const List<Dish> menuDishes = <Dish>[
         'Wok-seared beef cubes marinated in oyster sauce and Kampot pepper, '
         'served with fresh lettuce, tomato, cucumber and a lime–salt–pepper '
         'dipping sauce.',
-    price: 40000,
+    price: 20000,
     categoryId: 'grill',
     image: 'assets/images/beef-lok-lak.jpg',
     rating: 4.8,
@@ -79,7 +79,7 @@ const List<Dish> menuDishes = <Dish>[
         'Thinly sliced pork marinated in garlic and coconut milk, grilled '
         'over charcoal and served over broken rice with pickled vegetables '
         'and a bowl of clear broth.',
-    price: 25000,
+    price: 10000,
     categoryId: 'rice',
     image: 'assets/images/bai-sach-chrouk.jpg',
     rating: 4.9,
@@ -272,7 +272,7 @@ List<Order> seedOrders() {
       id: 'BD-1024',
       placedAt: now.subtract(const Duration(days: 3, hours: 1)),
       lines: const <OrderLine>[
-        OrderLine(name: 'Amok Trey', quantity: 1, price: 35000),
+        OrderLine(name: 'Amok Trey', quantity: 1, price: 15000),
         OrderLine(name: 'Tek Kompi', quantity: 2, price: 8000),
       ],
       mode: DeliveryMode.delivery,

@@ -35,13 +35,13 @@ void main() {
 
     await tester.tap(find.text('Amok Trey'));
     await tester.pumpAndSettle();
-    expect(find.text('Add to cart · ៛35,000'), findsOneWidget);
+    expect(find.text('Add to cart · ៛15,000'), findsOneWidget);
 
     await tester.tap(find.byTooltip('Increase quantity'));
     await tester.pump();
-    expect(find.text('Add to cart · ៛70,000'), findsOneWidget);
+    expect(find.text('Add to cart · ៛30,000'), findsOneWidget);
 
-    await tester.tap(find.text('Add to cart · ៛70,000'));
+    await tester.tap(find.text('Add to cart · ៛30,000'));
     await tester.pumpAndSettle();
     expect(store.cartCount, 2);
     expect(find.textContaining('added to cart'), findsOneWidget);
@@ -52,7 +52,7 @@ void main() {
     await tester.tap(find.text('Cart'));
     await tester.pumpAndSettle();
     expect(find.text('My cart'), findsOneWidget);
-    expect(find.text('៛70,000'), findsWidgets);
+    expect(find.text('៛30,000'), findsWidgets);
 
     await tester.tap(find.text('Place order'));
     await tester.pumpAndSettle();

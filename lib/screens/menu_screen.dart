@@ -1,6 +1,7 @@
 import 'package:balancika_demo/data/menu_data.dart';
 import 'package:balancika_demo/models/dish.dart';
 import 'package:balancika_demo/screens/dish_detail_screen.dart';
+import 'package:balancika_demo/screens/login_screen.dart';
 import 'package:balancika_demo/screens/notification_screen.dart';
 import 'package:balancika_demo/state/app_scope.dart';
 import 'package:balancika_demo/state/app_store.dart';
@@ -183,13 +184,39 @@ class _MenuScreenState extends State<MenuScreen> {
               Stack(
                 clipBehavior: Clip.none,
                 children: <Widget>[
-                  IconCircleButton(
-                    icon: Icons.notifications_none,
-                    iconSize: 21,
-                    tooltip: 'Notifications',
-                    onPressed:() {Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationScreen(),));
-                      },
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconCircleButton(
+                        icon: Icons.notifications_none,
+                        iconSize: 21,
+                        tooltip: 'Notifications',
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => NotificationScreen(),
+                            ),
+                          );
+                        },
+                      ),
+
+                      const SizedBox(width: 16),
+
+                      IconCircleButton(
+                        icon: Icons.exit_to_app,
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => RestaurantLoginScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
+
                   Positioned(
                     right: 1,
                     top: 1,
