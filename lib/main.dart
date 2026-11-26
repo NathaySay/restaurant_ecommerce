@@ -1,5 +1,5 @@
 import 'package:balancika_demo/data/menu_data.dart';
-import 'package:balancika_demo/screens/main_shell.dart';
+import 'package:balancika_demo/screens/login_screen.dart';
 import 'package:balancika_demo/state/app_scope.dart';
 import 'package:balancika_demo/state/app_store.dart';
 import 'package:balancika_demo/theme/app_theme.dart';
@@ -22,7 +22,7 @@ class BalancikaApp extends StatelessWidget {
         title: 'Balancika Demo',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.light,
-        home: const MainShell(),
+        home: const RestaurantLoginScreen(),
       ),
     );
   }

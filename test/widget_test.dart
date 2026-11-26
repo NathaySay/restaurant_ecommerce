@@ -16,6 +16,11 @@ void main() {
     await tester.pumpWidget(BalancikaApp(store: store));
     await tester.pumpAndSettle();
 
+    await tester.enterText(find.byType(TextField).at(0), '123456789');
+    await tester.enterText(find.byType(TextField).at(1), '123456');
+    await tester.tap(find.text('Verify & Sign In'));
+    await tester.pumpAndSettle();
+
     expect(find.text('Balancika Demo'), findsOneWidget);
 
     await tester.enterText(find.byType(TextField), 'amok');
